@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <title>CS 340: Test Canvas Server</title>
+</head>
+<body>
+  <div class="container">
+    <div class="text-center">
+      <h1>Test Canvas Server</h1>
+      <hr>
+      <h2>Connected Clients</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">ClientID</th>
+            <th scope="col">Images</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="clientData">
+          <!-- DYNAMIC DATA GOES HERE -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function fetchClientData() {
+      fetch("/getClientData")
+        .then((response) => response.json())
+        .then((data) => {
+          const clientData = document.getElementById('clientData');
+          clientData.innerHTML = '';
+          data.forEach((client) => {
+            const row = document.createElement('tr');
+            const cellClientID = document.createElement('td');
+            const cellImages = document.createElement('td');
+            const cellActions = document.createElement('td');
+
+            cellClientID.innerText = client.clientID;
+            client.imageURLs.forEach((imageURL) => {
+              const image = document.createElement('img');
+              image.src = imageURL;
+              image.style.maxWidth = '100px';
+              image.style.maxHeight = '100px';
+              cellImages.appendChild(image);
+            });
+
+            const acceptButton = document.createElement('button');
+            acceptButton.textContent = 'Accept';
+            acceptButton.classList.add('btn', 'btn-secondary');
+            acceptButton.onclick = function () {
+              updateServer('accept', { clientID: client.clientID });
+            };
+
+            const rejectButton = document.createElement('button');
+            rejectButton.textContent = 'Reject';
+            rejectButton.classList.add('btn', 'btn-secondary');
+            rejectButton.onclick = function () {
+              updateServer('reject', { clientID: client.clientID });
+            };
+
+            cellActions.appendChild(acceptButton); 
+            cellActions.appendChild(rejectButton); 
+
+            row.appendChild(cellClientID);
+            row.appendChild(cellImages);
+            row.appendChild(cellActions); 
+            clientData.appendChild(row);
+          });
+        })
+        .catch((error) => console.error('Error:', error));
+    }
+    fetchClientData();
+
+    function updateServer(func, data = undefined) {
+      options = { method: "POST" }
+
+      if (data !== undefined) {
+        options.body = JSON.stringify(data);
+        options.headers = { 'Content-Type': 'application/json' }
+      }
+
+      fetch(`/${func}`, options)
+        .then(() => fetch("/getState"))
+        .then(async (resp) => {
+          if (resp.status != 200) {
+            throw new Error(await resp.text());
+          } else {
+            return resp.blob();
+          }
+        })
+        .catch((err) => {
+          document.getElementById('error').innerHTML = err;
+          document.getElementById('error').style.display = "inline-block";
+          document.getElementById('spinner').style.display = "none";
+        })
+    }
+  </script>
+</body>
+</html>

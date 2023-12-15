@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tile Server Interface</title>
+    <style>
+      /* Add CSS styling here */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .status-box {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tile Server Interface</h1>
+
+    <!-- Section to Register Client -->
+    <button id="registerClient">Register Client</button>
+
+    <!-- Section to Upload and Register Image -->
+    <h2>Upload and Register Image</h2>
+    <form id="uploadForm">
+      <input type="file" id="imageInput" />
+      <button type="submit">Upload Image</button>
+    </form>
+
+    <!-- Section to Get Status -->
+    <h2>Get Status</h2>
+    <button id="getStatus">Get Status</button>
+    <div id="statusDisplay" class="status-box"></div>
+
+    <!-- Section to Get Image -->
+    <h2>Get Image</h2>
+    <button id="getImage">Get Image</button>
+    <div id="imageDisplay" class="status-box"></div>
+
+    <!-- Section to Get Tile -->
+    <h2>Get Tile</h2>
+    <button id="getTile">Get Tile</button>
+    <div id="tileDisplay" class="status-box"></div>
+
+    <!-- Section to Place Vote -->
+    <h2>Place Vote</h2>
+    <input type="number" id="voteXloc" placeholder="X Location" />
+    <input type="number" id="voteYloc" placeholder="Y Location" />
+    <button id="placeVote">Place Vote</button>
+
+    <!-- Section to Get Votes -->
+    <h2>Get Votes</h2>
+    <button id="getVotes">Get Votes</button>
+    <div id="votesDisplay" class="status-box"></div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
